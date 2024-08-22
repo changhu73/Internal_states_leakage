@@ -8,6 +8,7 @@ from sklearn.metrics import accuracy_score, classification_report
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 
+
 # Define the custom MLP architecture
 class CustomMLP(nn.Module):
     def __init__(self, input_dim, hidden_dim):
