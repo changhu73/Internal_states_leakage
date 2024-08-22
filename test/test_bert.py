@@ -53,6 +53,7 @@ test_dataset = NewsDataset(test_encodings, y_test)
 from transformers import Trainer, TrainingArguments
 
 training_args = TrainingArguments(
+    output_dir='./test',          # 输出文件夹
     num_train_epochs=3,              # 训练周期
     per_device_train_batch_size=8,   # 每个设备的训练批量
     per_device_eval_batch_size=16,    # 每个设备的评估批量
