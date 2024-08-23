@@ -58,6 +58,11 @@ y = np.concatenate((y_seen, y_unseen))
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+print(len(X_train))
+print(len(X_test))
+print(len(y_train))
+print(len(y_test))
+
 # Initialize the custom MLP model
 input_dim = X.shape[1]  # Number of features
 hidden_dim = 256  # Set hidden layer size
@@ -91,14 +96,14 @@ accuracy = accuracy_score(y_test, y_pred)
 print(f"模型准确率: {accuracy * 100:.2f}%")
 print(classification_report(y_test, y_pred, target_names=["seen", "unseen"]))
 
-# PCA for visualization
-pca = PCA(n_components=2)
-reduced_features = pca.fit_transform(X_test)
+# # PCA for visualization
+# pca = PCA(n_components=2)
+# reduced_features = pca.fit_transform(X_test)
 
-plt.figure(figsize=(10, 6))
-plt.scatter(reduced_features[:, 0], reduced_features[:, 1], c=y_test, cmap='viridis')
-plt.title('PCA降维后的特征分布')
-plt.xlabel('1')
-plt.ylabel('2')
-plt.colorbar()
-plt.savefig('test/pca_feature_distribution.png')
+# plt.figure(figsize=(10, 6))
+# plt.scatter(reduced_features[:, 0], reduced_features[:, 1], c=y_test, cmap='viridis')
+# plt.title('PCA降维后的特征分布')
+# plt.xlabel('1')
+# plt.ylabel('2')
+# plt.colorbar()
+# plt.savefig('test/pca_feature_distribution.png')
