@@ -1,4 +1,3 @@
-
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 import torch.nn as nn
@@ -26,21 +25,24 @@ class CustomMLP(nn.Module):
         return self.up(gated_output)
 
 model_name = "EleutherAI/gpt-neox-20b"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name, model_max_length=512)
 model = AutoModelForCausalLM.from_pretrained(model_name, output_hidden_states=True)
 
 tokenizer.pad_token = tokenizer.eos_token
 
 # Load datasets
+print("Loading datasets...")
 seen_df = pd.read_csv("dataset/seen_news.csv")
 unseen_df = pd.read_csv("dataset/unseen_news.csv")
+print("Datasets loaded.")
 
 seen_texts = seen_df['content'].tolist()
 unseen_texts = unseen_df['content'].tolist()
 
+# Monitor data processing with tqdm
 def extract_hidden_states(texts, model, tokenizer, batch_size=16):
     hidden_states = []
-    for i in range(0, len(texts), batch_size):
+    for i in tqdm(range(0, len(texts), batch_size), desc="Processing data batches"):
         batch_texts = texts[i:i + batch_size]
         inputs = tokenizer(batch_texts, return_tensors="pt", padding=True, truncation=True)
         with torch.no_grad():
@@ -48,7 +50,9 @@ def extract_hidden_states(texts, model, tokenizer, batch_size=16):
         hidden_states.append(outputs.hidden_states[-1].mean(dim=1).cpu().numpy())
     return np.vstack(hidden_states)
 
+print("Extracting hidden states for seen texts...")
 hidden_states_seen = extract_hidden_states(seen_texts, model, tokenizer)
+print("Extracting hidden states for unseen texts...")
 hidden_states_unseen = extract_hidden_states(unseen_texts, model, tokenizer)
 
 X_seen = hidden_states_seen
@@ -60,12 +64,13 @@ y_unseen = np.ones(len(X_unseen))
 X = np.vstack((X_seen, X_unseen))
 y = np.concatenate((y_seen, y_unseen))
 
+print("Splitting data into training and test sets...")
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-print(len(X_train))
-print(len(X_test))
-print(len(y_train))
-print(len(y_test))
+print(f"Training data size: {len(X_train)}")
+print(f"Test data size: {len(X_test)}")
+print(f"Training labels size: {len(y_train)}")
+print(f"Test labels size: {len(y_test)}")
 
 # Initialize the custom MLP model
 input_dim = X.shape[1]  # Number of features
