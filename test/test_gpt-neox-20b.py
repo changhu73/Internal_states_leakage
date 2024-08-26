@@ -1,3 +1,4 @@
+
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 import torch.nn as nn
@@ -7,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
-
+from tqdm import tqdm  # 用于进度条显示
 
 # Define the custom MLP architecture
 class CustomMLP(nn.Module):
@@ -37,12 +38,15 @@ unseen_df = pd.read_csv("dataset/unseen_news.csv")
 seen_texts = seen_df['content'].tolist()
 unseen_texts = unseen_df['content'].tolist()
 
-def extract_hidden_states(texts, model, tokenizer):
-    inputs = tokenizer(texts, return_tensors="pt", padding=True, truncation=True)
-    with torch.no_grad():
-        outputs = model(**inputs)
-    hidden_states = outputs.hidden_states[-1].mean(dim=1).cpu().numpy()
-    return hidden_states
+def extract_hidden_states(texts, model, tokenizer, batch_size=16):
+    hidden_states = []
+    for i in range(0, len(texts), batch_size):
+        batch_texts = texts[i:i + batch_size]
+        inputs = tokenizer(batch_texts, return_tensors="pt", padding=True, truncation=True)
+        with torch.no_grad():
+            outputs = model(**inputs)
+        hidden_states.append(outputs.hidden_states[-1].mean(dim=1).cpu().numpy())
+    return np.vstack(hidden_states)
 
 hidden_states_seen = extract_hidden_states(seen_texts, model, tokenizer)
 hidden_states_unseen = extract_hidden_states(unseen_texts, model, tokenizer)
@@ -76,34 +80,44 @@ optimizer = torch.optim.Adam(custom_mlp.parameters(), lr=0.001)
 X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
 y_train_tensor = torch.tensor(y_train, dtype=torch.float32).unsqueeze(1)  # Add a dimension for binary classification
 
-# Training the model
-for epoch in range(200):
+# Track loss values for visualization
+losses = []
+
+# Training the model with progress monitoring
+for epoch in tqdm(range(200), desc="Training Epochs"):
     custom_mlp.train()  # Set model to training mode
     optimizer.zero_grad()  # Zero the gradients
     outputs = custom_mlp(X_train_tensor)  # Forward pass
     loss = criterion(outputs, y_train_tensor)  # Compute the loss
     loss.backward()  # Backward pass
     optimizer.step()  # Update weights
+    
+    # Store the loss value
+    losses.append(loss.item())
+    
+    # Print training loss every 10 epochs
+    if (epoch + 1) % 10 == 0:
+        print(f"Epoch {epoch + 1}/{200}, Loss: {loss.item():.4f}")
+        
+        # Evaluate the model on test set
+        custom_mlp.eval()
+        X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
+        with torch.no_grad():
+            y_pred_logits = custom_mlp(X_test_tensor)  # Get logits
+            y_pred = (torch.sigmoid(y_pred_logits) > 0.5).float().numpy()  # Convert to binary predictions
+        
+        accuracy = accuracy_score(y_test, y_pred)
+        print(f"Test Accuracy at Epoch {epoch + 1}: {accuracy * 100:.2f}%")
 
-# Evaluate the model
-custom_mlp.eval()  # Set model to evaluation mode
-X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
-with torch.no_grad():
-    y_pred_logits = custom_mlp(X_test_tensor)  # Get logits
-    y_pred = (torch.sigmoid(y_pred_logits) > 0.5).float().numpy()  # Convert to binary predictions
+# Plot the training loss curve
+plt.figure(figsize=(10, 5))
+plt.plot(losses, label='Training Loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.title('Training Loss Curve')
+plt.legend()
+plt.show()
 
-accuracy = accuracy_score(y_test, y_pred)
-print(f"模型准确率: {accuracy * 100:.2f}%")
+# Final model evaluation
+print(f"Final Model Accuracy: {accuracy * 100:.2f}%")
 print(classification_report(y_test, y_pred, target_names=["seen", "unseen"]))
-
-# # PCA for visualization
-# pca = PCA(n_components=2)
-# reduced_features = pca.fit_transform(X_test)
-
-# plt.figure(figsize=(10, 6))
-# plt.scatter(reduced_features[:, 0], reduced_features[:, 1], c=y_test, cmap='viridis')
-# plt.title('PCA降维后的特征分布')
-# plt.xlabel('1')
-# plt.ylabel('2')
-# plt.colorbar()
-# plt.savefig('test/pca_feature_distribution.png')
