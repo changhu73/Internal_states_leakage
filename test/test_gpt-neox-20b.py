@@ -61,19 +61,38 @@ X_unseen = hidden_states_unseen
 y_seen = np.zeros(len(X_seen))
 y_unseen = np.ones(len(X_unseen))
 
+split_index_seen = int(0.8 * len(X_seen))
+X_seen_train = X_seen[:split_index_seen]
+X_seen_test = X_seen[split_index_seen:]
+y_seen_train = y_seen[:split_index_seen]
+y_seen_test = y_seen[split_index_seen:]
+
+split_index_unseen = int(0.8 * len(X_unseen))
+X_unseen_train = X_unseen[:split_index_unseen]
+X_unseen_test = X_unseen[split_index_unseen:]
+y_unseen_train = y_unseen[:split_index_unseen]
+y_unseen_test = y_unseen[split_index_unseen:]
+
+X_train = np.vstack((X_seen_train, X_unseen_train))
+X_test = np.vstack((X_seen_test, X_unseen_test))
+y_train = np.concatenate((y_seen_train, y_unseen_train))
+y_test = np.concatenate((y_seen_test, y_unseen_test))
+
+print("Splitting data into training and test sets...")
+
 X = np.vstack((X_seen, X_unseen))
 y = np.concatenate((y_seen, y_unseen))
 
+# # print("Splitting data into training and test sets...")
+# # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# split_index = int(0.8 * len(X))
+
+# X_train = X[:split_index] 
+# X_test = X[split_index:] 
+# y_train = y[:split_index] 
+# y_test = y[split_index:]  
 # print("Splitting data into training and test sets...")
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-split_index = int(0.8 * len(X))
-
-X_train = X[:split_index] 
-X_test = X[split_index:] 
-y_train = y[:split_index] 
-y_test = y[split_index:]  
-print("Splitting data into training and test sets...")
 
 print(f"Training data size: {len(X_train)}")
 print(f"Test data size: {len(X_test)}")
