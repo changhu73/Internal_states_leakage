@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
-from tqdm import tqdm  # 用于进度条显示
+from tqdm import tqdm 
 
 # Define the custom MLP architecture
 class CustomMLP(nn.Module):
@@ -64,8 +64,16 @@ y_unseen = np.ones(len(X_unseen))
 X = np.vstack((X_seen, X_unseen))
 y = np.concatenate((y_seen, y_unseen))
 
+# print("Splitting data into training and test sets...")
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+split_index = int(0.8 * len(X))
+
+X_train = X[:split_index] 
+X_test = X[split_index:] 
+y_train = y[:split_index] 
+y_test = y[split_index:]  
 print("Splitting data into training and test sets...")
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 print(f"Training data size: {len(X_train)}")
 print(f"Test data size: {len(X_test)}")
