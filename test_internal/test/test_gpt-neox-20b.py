@@ -94,10 +94,10 @@ y = np.concatenate((y_seen, y_unseen))
 # y_test = y[split_index:]  
 # print("Splitting data into training and test sets...")
 
-print(f"Training data size: {len(X_train)}")
-print(f"Test data size: {len(X_test)}")
-print(f"Training labels size: {len(y_train)}")
-print(f"Test labels size: {len(y_test)}")
+# print(f"Training data size: {len(X_train)}")
+# print(f"Test data size: {len(X_test)}")
+# print(f"Training labels size: {len(y_train)}")
+# print(f"Test labels size: {len(y_test)}")
 
 # Initialize the custom MLP model
 input_dim = X.shape[1]  # Number of features
