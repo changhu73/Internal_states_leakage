@@ -1,2 +1,1 @@
-# LLM copyright
-LLM Hallucination(SIT)
+# LLM copyright(SIT)
