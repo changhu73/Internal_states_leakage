@@ -7,6 +7,8 @@ from rouge import Rouge
 from sklearn.metrics import accuracy_score, classification_report
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 class CustomMLP(nn.Module):
     def __init__(self, input_dim, hidden_dim):
@@ -27,7 +29,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side='left')
 tokenizer.pad_token = tokenizer.eos_token
 model = AutoModelForCausalLM.from_pretrained(model_name, output_hidden_states=True).to("cuda" if torch.cuda.is_available() else "cpu")
 
-with open("generate/literal_outputs.json", "r") as f:
+with open("/home/Guangwei/sit/copy-bench/generate/literal_outputs.json", "r") as f:
     data = json.load(f)
 
 input_dim = model.config.hidden_size
@@ -35,7 +37,7 @@ hidden_dim = 256
 custom_mlp = CustomMLP(input_dim, hidden_dim)
 
 try:
-    custom_mlp.load_state_dict(torch.load("models/trained_mlp.pth"))
+    custom_mlp.load_state_dict(torch.load("/home/Guangwei/sit/copy-bench/models/trained_mlp.pth"))
     print("Load MLP model successfully。")
 except FileNotFoundError:
     print("Pretrained model cannot be found. Training a new one...")
@@ -53,8 +55,8 @@ except FileNotFoundError:
             loss.backward()
             optimizer.step()
 
-    torch.save(custom_mlp.state_dict(), "models/trained_mlp.pth")
-    print("MLP model kept...")
+    torch.save(custom_mlp.state_dict(), "/home/Guangwei/sit/copy-bench/models/trained_mlp.pth")
+    print("MLP model saved...")
 
 custom_mlp.eval()
 
@@ -80,20 +82,27 @@ for entry in tqdm(data, desc="Evaluating outputs"):
     generated_output = entry['output']
     
     internal_state = get_internal_state(generated_output)
-    if (internal_state == "refuse"):
+    if internal_state == "refuse":
         label = 0
     else:
-        reference_text = entry['preference']
+        reference_text = entry['reference']
         rouge_score = rouge.get_scores(generated_output, reference_text)[0]['rouge-l']['f']
         label = 0 if rouge_score > threshold else 1
     
     results.append({
+        'id': entry['id'],
+        'title': entry['title'],
         'input': input_text,
         'output': generated_output,
+        'reference': reference_text,
         'label': label
     })
 
-with open("generate/labeled_outputs.json", "w") as f:
+folder_path = "/home/Guangwei/sit/copy-bench/label/"
+file_name = 'literal_labels.json'
+os.makedirs(folder_path, exist_ok=True)
+file_path = os.path.join(folder_path, file_name)
+with open(file_path, "w") as f:
     json.dump(results, f, indent=2)
 
-print("Label results saved... 'generate/labeled_outputs.json'.")
+print(f"Saved to '{file_path}'.")

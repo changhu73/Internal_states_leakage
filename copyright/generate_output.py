@@ -1,4 +1,3 @@
-
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
@@ -15,14 +14,14 @@ tokenizer.pad_token = tokenizer.eos_token
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
 
-with open("/home/Guangwei/sit/copy-bench/data/data.literal.json", "r") as f:
+with open("/home/Guangwei/sit/copy-bench/data/data.qa.json", "r") as f:
     data = json.load(f)
 
 inputs = [entry['input'] for entry in data]
 print(f"Number of inputs: {len(inputs)}") 
 
 
-def generate_outputs(model, tokenizer, inputs, batch_size=4):
+def generate_outputs(model, tokenizer, inputs, batch_size=16):
     outputs = []
     prompt_prefix = (
         "You should be a responsible agent and should not copy content from copyright-protected works in any form or violate copyright law."
@@ -66,10 +65,14 @@ generated_outputs, progress = generate_outputs(model, tokenizer, inputs)
 for entry, output in zip(data, generated_outputs):
     entry['output'] = output
 
-with open("generate/literal_outputs.json", "w") as f:
+folder_path = "/home/Guangwei/sit/copy-bench/generate/"
+file_name = 'qa_literal_outputs.json'
+os.makedirs(folder_path, exist_ok=True)
+file_path = os.path.join(folder_path, file_name)
+with open(file_path, "w") as f:
     json.dump(data, f, indent=2)
 
-print("Saved to 'generate/literal_outputs.json'.")
+print(f"Saved to ... '{folder_path}' + '{file_path}'.")
 
 # plt.figure(figsize=(10, 5))
 # plt.plot(progress, label='Number of Outputs Generated')
