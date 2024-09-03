@@ -5,4 +5,5 @@
 1. Generate output(generate_output.py)
 2. Outputs clean, just keep the outputs after input sentences(outputs_clean.py)
 3. Evaluate the label of output(evaluate_label.py)
-4. Train the MLP using the dataset above(MLPtrain.py)
+4. Abstract the labels of reference, all of them are "refuse 0"(reference_label.py)
+5. Train the MLP using the dataset above(MLPtrain.py)
