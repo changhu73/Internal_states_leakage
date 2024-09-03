@@ -48,7 +48,7 @@ for entry in compliance_json_data:
         compliance_outputs.append(entry['output'])
     elif 'reference' in entry and entry['reference'] is not None:
         compliance_outputs.append(entry['reference'])
-    y_compliance.append(entry.get('label', 2))
+    y_compliance.append(1)
 
 with open('/home/Guangwei/sit/copy-bench/label/literal_reference.json', 'r', encoding='utf-8') as file:
     refuse_json_data = json.load(file)
@@ -60,7 +60,7 @@ for entry in refuse_json_data:
         refuse_outputs.append(entry['reference'])
     elif 'output' in entry and entry['output'] is not None:
         refuse_outputs.append(entry['output'])
-    y_refuse.append(entry.get('label', 2))
+    y_refuse.append(0)
 
 y_compliance = np.array(y_compliance)
 y_refuse = np.array(y_refuse)
