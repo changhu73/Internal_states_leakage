@@ -27,20 +27,46 @@ model = AutoModelForCausalLM.from_pretrained(model_name, output_hidden_states=Tr
 
 tokenizer.pad_token = tokenizer.eos_token
 
+# with open('/home/Guangwei/sit/copy-bench/label/literal_output.json', 'r', encoding='utf-8') as file:
+#     compliance_json_data = json.load(file)
+# compliance_outputs = [entry['output'] for entry in compliance_json_data]
+# y_compliance = [entry['label'] for entry in compliance_json_data]
+
+# with open('/home/Guangwei/sit/copy-bench/label/literal_reference.json', 'r', encoding='utf-8') as file:
+#     refuse_json_data = json.load(file)
+# refuse_outputs = [entry['reference'] for entry in refuse_json_data]
+# y_refuse = [entry['label'] for entry in refuse_json_data]
+
 with open('/home/Guangwei/sit/copy-bench/label/literal_output.json', 'r', encoding='utf-8') as file:
     compliance_json_data = json.load(file)
-compliance_outputs = [entry['output'] for entry in compliance_json_data]
-y_compliance = [entry['label'] for entry in compliance_json_data]
+
+# both ok: normal or shuffled
+compliance_outputs = []
+y_compliance = []
+for entry in compliance_json_data:
+    if 'output' in entry and entry['output'] is not None:
+        compliance_outputs.append(entry['output'])
+    elif 'reference' in entry and entry['reference'] is not None:
+        compliance_outputs.append(entry['reference'])
+    y_compliance.append(entry.get('label', 2))
 
 with open('/home/Guangwei/sit/copy-bench/label/literal_reference.json', 'r', encoding='utf-8') as file:
     refuse_json_data = json.load(file)
-refuse_outputs = [entry['reference'] for entry in refuse_json_data]
-y_refuse = [entry['label'] for entry in refuse_json_data]
+
+refuse_outputs = []
+y_refuse = []
+for entry in refuse_json_data:
+    if 'reference' in entry and entry['reference'] is not None:
+        refuse_outputs.append(entry['reference'])
+    elif 'output' in entry and entry['output'] is not None:
+        refuse_outputs.append(entry['output'])
+    y_refuse.append(entry.get('label', 2))
 
 y_compliance = np.array(y_compliance)
 y_refuse = np.array(y_refuse)
 
-def extract_hidden_states(texts, model, tokenizer, batch_size=8):
+
+def extract_hidden_states(texts, model, tokenizer, batch_size=4):
     hidden_states = []
     for i in tqdm(range(0, len(texts), batch_size), desc="Processing data batches"):
         batch_texts = texts[i:i + batch_size]
@@ -90,7 +116,7 @@ y_train_tensor = torch.tensor(y_train, dtype=torch.float32).unsqueeze(1)
 
 losses = []
 
-for epoch in tqdm(range(200), desc="Training Epochs"):
+for epoch in tqdm(range(500), desc="Training Epochs"):
     custom_mlp.train()
     optimizer.zero_grad()
     outputs = custom_mlp(X_train_tensor)
@@ -101,7 +127,7 @@ for epoch in tqdm(range(200), desc="Training Epochs"):
     losses.append(loss.item())
     
     if (epoch + 1) % 10 == 0:
-        print(f"Epoch {epoch + 1}/{200}, Loss: {loss.item():.4f}")
+        print(f"Epoch {epoch + 1}/{500}, Loss: {loss.item():.4f}")
         
         custom_mlp.eval()
         X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
@@ -123,5 +149,15 @@ plt.show()
 print(f"Final Model Accuracy: {accuracy * 100:.2f}%")
 print(classification_report(y_test, y_pred, target_names=["Refuse", "Compliance"]))
 
-torch.save(custom_mlp.state_dict(), '/home/Guangwei/sit/copy-bench/models/custom_mlp_model.pth')
-print("Model saved to '/home/Guangwei/sit/copy-bench/models/custom_mlp_model.pth'.")
+# torch.save(custom_mlp.state_dict(), '/home/Guangwei/sit/copy-bench/models/custom_mlp_model.pth')
+# print("Model saved to '/home/Guangwei/sit/copy-bench/models/custom_mlp_model.pth'.")
+
+checkpoint = {
+    'epoch': epoch + 1,
+    'model_state_dict': custom_mlp.state_dict(), 
+    'optimizer_state_dict': optimizer.state_dict(),
+    'loss': loss.item(),
+}
+
+torch.save(checkpoint, '/home/Guangwei/sit/copy-bench/models/custom_mlp_checkpoint.ckpt')
+print("Checkpoint saved to '/home/Guangwei/sit/copy-bench/models/custom_mlp_checkpoint.ckpt'.")

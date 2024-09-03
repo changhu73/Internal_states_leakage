@@ -7,8 +7,9 @@ with open(input_file_path, 'r', encoding='utf-8') as file:
     json_data = json.load(file)
 
 new_data = []
-for entry in json_data:
+for idx, entry in enumerate(json_data, start=1):
     new_entry = {
+        'id': idx,
         'reference': entry['reference'],
         'label': 0
     }
@@ -17,4 +18,4 @@ for entry in json_data:
 with open(output_file_path, 'w', encoding='utf-8') as file:
     json.dump(new_data, file, ensure_ascii=False, indent=2)
 
-print(f"reference json file saved... {output_file_path}.")
+print(f"Reference JSON file saved... {output_file_path}.")
