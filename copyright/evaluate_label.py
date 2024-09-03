@@ -5,12 +5,12 @@ from rouge import Rouge
 from tqdm import tqdm
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
-model_name = "EleutherAI/gpt-neox-20b"
-tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side='left')
-tokenizer.pad_token = tokenizer.eos_token
-model = AutoModelForCausalLM.from_pretrained(model_name, output_hidden_states=True).to("cuda" if torch.cuda.is_available() else "cpu")
+# model_name = "EleutherAI/gpt-neox-20b"
+# tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side='left')
+# tokenizer.pad_token = tokenizer.eos_token
+# model = AutoModelForCausalLM.from_pretrained(model_name, output_hidden_states=True).to("cuda" if torch.cuda.is_available() else "cpu")
 
 with open("/home/Guangwei/sit/copy-bench/cleaned/literal_data.json", "r") as f:
     data = json.load(f)

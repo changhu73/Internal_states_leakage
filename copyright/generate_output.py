@@ -14,7 +14,7 @@ tokenizer.pad_token = tokenizer.eos_token
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
 
-with open("/home/Guangwei/sit/copy-bench/data/data.qa.json", "r") as f:
+with open("/home/Guangwei/sit/copy-bench/data/data.nonliteral.json", "r") as f:
     data = json.load(f)
 
 inputs = [entry['input'] for entry in data]
@@ -66,7 +66,7 @@ for entry, output in zip(data, generated_outputs):
     entry['output'] = output
 
 folder_path = "/home/Guangwei/sit/copy-bench/generate/"
-file_name = 'qa_literal_outputs.json'
+file_name = 'non_literal_outputs.json'
 os.makedirs(folder_path, exist_ok=True)
 file_path = os.path.join(folder_path, file_name)
 with open(file_path, "w") as f:
