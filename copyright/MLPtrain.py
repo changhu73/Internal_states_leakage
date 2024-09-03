@@ -27,18 +27,20 @@ model = AutoModelForCausalLM.from_pretrained(model_name, output_hidden_states=Tr
 
 tokenizer.pad_token = tokenizer.eos_token
 
-with open('/home/Guangwei/sit/copy-bench/label/literal_labels.json', 'r', encoding='utf-8') as file:
-    json_data = json.load(file)
-compliance_data = [entry['output'] for entry in json_data if entry['label'] == 1]
+with open('/home/Guangwei/sit/copy-bench/label/literal_output.json', 'r', encoding='utf-8') as file:
+    compliance_json_data = json.load(file)
+compliance_outputs = [entry['output'] for entry in compliance_json_data]
+y_compliance = [entry['label'] for entry in compliance_json_data]
 
 with open('/home/Guangwei/sit/copy-bench/label/literal_reference.json', 'r', encoding='utf-8') as file:
     refuse_json_data = json.load(file)
-refuse_data = [entry['reference'] for entry in refuse_json_data]
+refuse_outputs = [entry['reference'] for entry in refuse_json_data]
+y_refuse = [entry['label'] for entry in refuse_json_data]
 
-compliance_outputs = compliance_data
-refuse_outputs = refuse_data
+y_compliance = np.array(y_compliance)
+y_refuse = np.array(y_refuse)
 
-def extract_hidden_states(texts, model, tokenizer, batch_size=16):
+def extract_hidden_states(texts, model, tokenizer, batch_size=8):
     hidden_states = []
     for i in tqdm(range(0, len(texts), batch_size), desc="Processing data batches"):
         batch_texts = texts[i:i + batch_size]
@@ -56,9 +58,6 @@ hidden_states_refuse = extract_hidden_states(refuse_outputs, model, tokenizer)
 
 X_compliance = hidden_states_compliance
 X_refuse = hidden_states_refuse
-
-y_compliance = np.ones(len(X_compliance)) 
-y_refuse = np.zeros(len(X_refuse))
 
 split_index_compliance = int(0.8 * len(X_compliance))
 X_compliance_train = X_compliance[:split_index_compliance]
