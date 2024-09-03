@@ -9,7 +9,7 @@ with open(input_file_path, 'r', encoding='utf-8') as file:
 new_data = []
 for entry in json_data:
     new_entry = {
-        'reference': entry['output'],
+        'output': entry['output'],
         'label': entry['label']
     }
     new_data.append(new_entry)
