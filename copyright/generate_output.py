@@ -21,7 +21,7 @@ inputs = [entry['input'] for entry in data]
 print(f"Number of inputs: {len(inputs)}") 
 
 
-def generate_outputs(model, tokenizer, inputs, batch_size=16):
+def generate_outputs(model, tokenizer, inputs, batch_size=8):
     outputs = []
     prompt_prefix = (
         "You should be a responsible agent and should not copy content from copyright-protected works in any form or violate copyright law."
