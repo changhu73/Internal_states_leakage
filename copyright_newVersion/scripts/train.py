@@ -4,9 +4,10 @@ import torch.nn as nn
 import torch.optim as optim
 import time
 from sklearn.metrics import precision_score, recall_score, f1_score
+from sklearn.model_selection import train_test_split
 from tqdm import tqdm
-import numpy as np
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from torch.utils.data import DataLoader, TensorDataset
 
 model_name = "meta-llama/Llama-2-7b-hf"
 tokenizer = AutoTokenizer.from_pretrained(model_name, model_max_length=512)
@@ -17,31 +18,37 @@ def load_data(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         return json.load(file)
 
-def extract_hidden_states(texts, model, tokenizer, batch_size=4):
-    hidden_states = []
-    for i in tqdm(range(0, len(texts), batch_size), desc="Processing data batches"):
-        batch_texts = texts[i:i + batch_size]
-        inputs = tokenizer(batch_texts, return_tensors="pt", padding=True, truncation=True)
-        with torch.no_grad():
-            outputs = model(**inputs)
-        hidden_states.append(outputs.hidden_states[-1].mean(dim=1).cpu().numpy())
-    return np.vstack(hidden_states)
+def extract_hidden_states(text, model, tokenizer):
+    inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True)
+    with torch.no_grad():
+        outputs = model(**inputs)
+    hidden_state = outputs.hidden_states[-1].mean(dim=1).cpu().numpy()
+    return hidden_state
 
-def prepare_training_data(infringement_data, non_infringement_data):
+def prepare_training_data(infringement_data, non_infringement_data, test_size=0.2):
     inputs = []
     labels = []
 
-    for entry in infringement_data:
-        hidden_state = extract_hidden_states(entry['input'], model, tokenizer)
-        inputs.append(hidden_state)
-        labels.append(0)
+    total_data = len(infringement_data) + len(non_infringement_data)
+    with tqdm(total=total_data, desc="Processing data") as pbar:
+        for entry in infringement_data:
+            hidden_state = extract_hidden_states(entry['input'], model, tokenizer)
+            inputs.append(hidden_state)
+            labels.append(0)
+            pbar.update(1)
 
-    for entry in non_infringement_data:
-        hidden_state = extract_hidden_states(entry['input'], model, tokenizer)
-        inputs.append(hidden_state)
-        labels.append(1)
+        for entry in non_infringement_data:
+            hidden_state = extract_hidden_states(entry['input'], model, tokenizer)
+            inputs.append(hidden_state)
+            labels.append(1)
+            pbar.update(1)
 
-    return torch.stack(inputs), torch.tensor(labels)
+    inputs = torch.tensor(inputs)
+    labels = torch.tensor(labels)
+
+    train_inputs, test_inputs, train_labels, test_labels = train_test_split(inputs, labels, test_size=test_size, random_state=42)
+
+    return train_inputs, test_inputs, train_labels, test_labels
 
 class CustomMLP(nn.Module):
     def __init__(self, input_dim, hidden_dim):
@@ -66,7 +73,7 @@ def calculate_accuracy(outputs, labels):
 def calculate_metrics(outputs, labels):
     predicted = torch.round(torch.sigmoid(outputs.detach())).cpu().numpy()
     labels = labels.cpu().numpy()
-    
+
     precision = precision_score(labels, predicted)
     recall = recall_score(labels, predicted)
     f1 = f1_score(labels, predicted)
@@ -77,46 +84,73 @@ def main():
     infringement_data = load_data('/home/Guangwei/sit/copy-bench/test_division/literal.infringement.json')
     non_infringement_data = load_data('/home/Guangwei/sit/copy-bench/test_division/literal.non_infringement.json')
 
-    inputs, labels = prepare_training_data(infringement_data, non_infringement_data)
+    train_inputs, test_inputs, train_labels, test_labels = prepare_training_data(infringement_data, non_infringement_data)
 
     input_dim = 768
     hidden_dim = 128
+    batch_size = 16 
 
     model = CustomMLP(input_dim, hidden_dim)
     criterion = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+    train_dataset = TensorDataset(train_inputs, train_labels)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
     model.train()
     num_epochs = 100
 
     for epoch in range(num_epochs):
         start_time = time.time()
-        
-        optimizer.zero_grad()
-        outputs = model(inputs).squeeze()
-        loss = criterion(outputs, labels.float())
-        loss.backward()
-        optimizer.step()
 
-        accuracy = calculate_accuracy(outputs, labels)
+        epoch_loss = 0
+        epoch_accuracy = 0
+
+        for batch_inputs, batch_labels in train_loader:
+            optimizer.zero_grad()
+            outputs = model(batch_inputs).squeeze()
+            loss = criterion(outputs, batch_labels.float())
+            loss.backward()
+            optimizer.step()
+
+            epoch_loss += loss.item()
+            epoch_accuracy += calculate_accuracy(outputs, batch_labels)
+
+        epoch_loss /= len(train_loader)
+        epoch_accuracy /= len(train_loader)
 
         elapsed_time = time.time() - start_time
-        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}, Accuracy: {accuracy:.4f}, Time: {elapsed_time:.2f}s')
+        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {epoch_loss:.4f}, Accuracy: {epoch_accuracy:.4f}, Time: {elapsed_time:.2f}s')
 
-    # Evaluate on the test set
     model.eval()
     with torch.no_grad():
-        outputs = model(inputs).squeeze()
-        test_loss = criterion(outputs, labels.float())
-        test_accuracy = calculate_accuracy(outputs, labels)
-        
-        # Calculate precision, recall, and F1 score
-        precision, recall, f1 = calculate_metrics(outputs, labels)
-        
-        print(f'Test Loss: {test_loss.item():.4f}, Test Accuracy: {test_accuracy:.4f}')
+        test_dataset = TensorDataset(test_inputs, test_labels)
+        test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
+        test_loss = 0
+        test_accuracy = 0
+        all_outputs = []
+        all_labels = []
+
+        for batch_inputs, batch_labels in test_loader:
+            outputs = model(batch_inputs).squeeze()
+            loss = criterion(outputs, batch_labels.float())
+            test_loss += loss.item()
+            test_accuracy += calculate_accuracy(outputs, batch_labels)
+            all_outputs.append(outputs)
+            all_labels.append(batch_labels)
+
+        test_loss /= len(test_loader)
+        test_accuracy /= len(test_loader)
+
+        all_outputs = torch.cat(all_outputs)
+        all_labels = torch.cat(all_labels)
+
+        precision, recall, f1 = calculate_metrics(all_outputs, all_labels)
+
+        print(f'Test Loss: {test_loss:.4f}, Test Accuracy: {test_accuracy:.4f}')
         print(f'Test Precision: {precision:.4f}, Test Recall: {recall:.4f}, Test F1 Score: {f1:.4f}')
 
-    # 保存模型
     torch.save(model.state_dict(), '/home/Guangwei/sit/copy-bench/models/custom_mlp_model.pt')
     print("模型已保存为 'custom_mlp_model.pt'")
 
