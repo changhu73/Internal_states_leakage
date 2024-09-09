@@ -2,4 +2,7 @@
 
 "git clone https://github.com/chentong0/copy-bench.git" under "copyright" folder
 
-1. Generate output(generate_output.py)
+eg:
+1. Generate output(scripts/generate.py)
+2. Evaluate rouge score(scripts/eval_literal_copying.py)
+3. Divide into infringement/non-infringement(scripts.label.py)
