@@ -61,13 +61,10 @@ def extract_hidden_states(texts, model, tokenizer, batch_size=4):
     return np.vstack(hidden_states)
 
 print("Extracting hidden states for non_infringement texts...")
-hidden_states_non_infringement = extract_hidden_states(non_infringement_outputs, model, tokenizer)
+X_non_infringement = extract_hidden_states(non_infringement_outputs, model, tokenizer)
 
 print("Extracting hidden states for infringement texts...")
-hidden_states_infringement = extract_hidden_states(infringement_outputs, model, tokenizer)
-
-X_non_infringement = hidden_states_non_infringement
-X_infringement = hidden_states_infringement
+X_infringement = extract_hidden_states(infringement_outputs, model, tokenizer)
 
 split_index_non_infringement = int(0.8 * len(X_non_infringement))
 X_non_infringement_train = X_non_infringement[:split_index_non_infringement]
@@ -100,7 +97,7 @@ y_train_tensor = torch.tensor(y_train, dtype=torch.float32).unsqueeze(1)
 
 losses = []
 
-for epoch in tqdm(range(500), desc="Training Epochs"):
+for epoch in tqdm(range(200), desc="Training Epochs"):
     custom_mlp.train()
     optimizer.zero_grad()
     outputs = custom_mlp(X_train_tensor)
@@ -111,7 +108,7 @@ for epoch in tqdm(range(500), desc="Training Epochs"):
     losses.append(loss.item())
     
     if (epoch + 1) % 10 == 0:
-        print(f"Epoch {epoch + 1}/{500}, Loss: {loss.item():.4f}")
+        print(f"Epoch {epoch + 1}/{200}, Loss: {loss.item():.4f}")
         
         custom_mlp.eval()
         X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
