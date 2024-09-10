@@ -207,7 +207,7 @@ if __name__ == "__main__":
     parser.add_argument("--shots", type=int, default=1)
     parser.add_argument("--format", choices=["default", "chat", "context"], default="default")
     # batch_size
-    parser.add_argument("--batch_size", type=int, default=512)
+    parser.add_argument("--batch_size", type=int, default=4)
     # decoding parameters
     parser.add_argument("--max_new_tokens", type=int, default=200)
     parser.add_argument("--temperature", type=float, default=0.0)
