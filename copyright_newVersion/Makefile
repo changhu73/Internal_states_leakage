@@ -1,3 +1,9 @@
+/bin/python3 /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/generate.py --input_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/data/data.literal.json --prompt_file  /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/prompts/prompts.literal.format1.json --output_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/outputs/outputs.literal.prompt1.Meta-Llama-3.1-8B.greedy.json --model meta-llama/Meta-Llama-3.1-8B --n_instances 758
+/bin/python3 /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/generate.py --input_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/data/data.nonliteral.json --prompt_file  /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/prompts/prompts.nonliteral.format1.json --output_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/outputs/outputs.nonliteral.prompt1.Meta-Llama-3.1-8B.greedy.json --model meta-llama/Meta-Llama-3.1-8B --n_instances 590
+/bin/python3 /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/generate.py --input_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/data/data.qa.json --prompt_file  /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/prompts/prompts.qa.format1.json --output_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/outputs/outputs.qa.prompt1.Meta-Llama-3.1-8B.greedy.json --model meta-llama/Meta-Llama-3.1-8B --n_instances 589
+
+/bin/python3 /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/eval_literal_copying.py --input /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/outputs/outputs.literal.prompt1.Meta-Llama-3.1-8B.greedy.json --output /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scores/scores-literal-copying.literal.prompt1.Meta-Llama-3.1-8B.greedy.json
+
 export PYTHONPATH=./src:$$PYTHONPATH
 
 quick_start:
@@ -13,6 +19,8 @@ quick_start:
 		--output_file /home/Guangwei/sit/copy-bench/outputs/outputs.literal.prompt1.$(MODEL_TAG).greedy.json \
 		--model $(HF_MODEL) \
 		--n_instances 758 \
+
+	/bin/python3 /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/generate.py --input_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/data/data.literal.json --prompt_file  /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/prompts/prompts.literal.format1.json --output_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/outputs/outputs.literal.prompt1.Meta-Llama-3.1-8B.greedy.json --model meta-llama/Meta-Llama-3.1-8B --n_instances 758
 
 	/home/Guangwei/.conda/envs/sit/bin/python /home/Guangwei/sit/copy-bench/scripts/eval_literal_copying.py\
 		--input /home/Guangwei/sit/copy-bench/outputs/outputs.literal.prompt1.$(MODEL_TAG).greedy.json \
@@ -30,6 +38,8 @@ quick_start:
 		--model $(HF_MODEL) \
 		--max_new_tokens 1024 \
 		--n_instances 1000 \
+
+	/bin/python3 /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/generate.py --input_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/data/data.nonliteral.json --prompt_file  /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/prompts/prompts.nonliteral.format1.json --output_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/outputs/outputs.nonliteral.prompt1.Meta-Llama-3.1-8B.greedy.json --model meta-llama/Meta-Llama-3.1-8B --n_instances 1000
 
 	/home/Guangwei/.conda/envs/sit/bin/python /home/Guangwei/sit/copy-bench/scripts/eval_char_copying.py \
 		--input outputs/outputs.nonliteral.prompt1.$(MODEL_TAG).greedy.json \
@@ -50,6 +60,8 @@ quick_start:
 		--output_file outputs/outputs.qa.prompt1.Llama-2-7b-hf.greedy.json \
 		--model meta-llama/Llama-2-7b-hf \
 		--n_instances 589 \
+
+	/bin/python3 /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/generate.py --input_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/data/data.qa.json --prompt_file  /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/prompts/prompts.qa.format1.json --output_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/outputs/outputs.qa.prompt1.Meta-Llama-3.1-8B.greedy.json --model meta-llama/Meta-Llama-3.1-8B --n_instances 589
 
 	python scripts/eval_qa.py \
 		--input outputs/outputs.qa.prompt1.$(MODEL_TAG).greedy.json \

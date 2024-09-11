@@ -2,7 +2,7 @@ import sys, os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 import torch
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 import json
 from tqdm import tqdm

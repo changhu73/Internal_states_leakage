@@ -21,13 +21,13 @@ class CustomMLP(nn.Module):
         gated_output = down_output * self.activation(gate_output)
         return self.up(gated_output)
 
-model_name = "meta-llama/Llama-2-7b-hf"
+model_name = "meta-llama/Meta-Llama-3.1-8B"
 tokenizer = AutoTokenizer.from_pretrained(model_name, model_max_length=512)
 model = AutoModelForCausalLM.from_pretrained(model_name, output_hidden_states=True)
 
 tokenizer.pad_token = tokenizer.eos_token
 
-with open('/home/Guangwei/sit/copy-bench/test_division/literal.non_infringement.json', 'r', encoding='utf-8') as file:
+with open('/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/test_division/literal.non_infringement.json', 'r', encoding='utf-8') as file:
     non_infringement_json_data = json.load(file)
 
 # both ok: normal or shuffled
@@ -37,7 +37,7 @@ for entry in non_infringement_json_data:
     non_infringement_outputs.append(entry['input'])
     y_non_infringement.append(1)
 
-with open('/home/Guangwei/sit/copy-bench/test_division/literal.infringement.json', 'r', encoding='utf-8') as file:
+with open('/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/test_division/literal.infringement.json', 'r', encoding='utf-8') as file:
     infringement_json_data = json.load(file)
 
 infringement_outputs = []
@@ -140,5 +140,5 @@ checkpoint = {
     'loss': loss.item(),
 }
 
-torch.save(checkpoint, '/home/Guangwei/sit/copy-bench/models/custom_mlp_checkpoint.ckpt')
-print("Checkpoint saved to '/home/Guangwei/sit/copy-bench/models/custom_mlp_checkpoint.ckpt'.")
+torch.save(checkpoint, '/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/models/custom_mlp_checkpoint.ckpt')
+print("Checkpoint saved to '/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/models/custom_mlp_checkpoint.ckpt'.")
