@@ -6,12 +6,12 @@ def process_data(scores_file, infringement_output, non_infringement_output):
     with open(scores_file, 'r', encoding='utf-8') as file:
         data = json.load(file)
 
-    scores = [entry['score_rouge_1'] for entry in data]
-    threshold = np.median(scores)
-    print(f'Median threshold: {threshold}')
+    # scores = [entry['score_rouge_1'] for entry in data]
+    # threshold = np.median(scores)
+    # print(f'Median threshold: {threshold}')
 
-    group1 = [entry for entry in data if entry['score_rouge_1'] > threshold]
-    group2 = [entry for entry in data if entry['score_rouge_1'] < threshold]
+    group1 = [entry for entry in data if entry['score_rouge_1'] > 0.27]
+    group2 = [entry for entry in data if entry['score_rouge_1'] < 0.1]
 
     for entry in group1:
         entry['label'] = 0

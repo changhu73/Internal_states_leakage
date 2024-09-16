@@ -22,15 +22,92 @@ class CustomMLP(nn.Module):
         gated_output = down_output * self.activation(gate_output)
         return self.up(gated_output)
 
-def extract_hidden_states(texts, model, tokenizer, batch_size=4):
+## 1.取最后一层，普通版本
+# def extract_hidden_states(texts, model, tokenizer, batch_size=4):
+#     hidden_states = []
+#     for i in tqdm(range(0, len(texts), batch_size), desc="Processing data batches"):
+#         batch_texts = texts[i:i + batch_size]
+#         inputs = tokenizer(batch_texts, return_tensors="pt", padding=True, truncation=True)
+#         with torch.no_grad():
+#             outputs = model(**inputs)
+#         hidden_states.append(outputs.hidden_states[-1].mean(dim=1).cpu().numpy())
+#     return np.vstack(hidden_states)
+
+## 2.选择不同层：指定layer_index
+# def extract_hidden_states(texts, model, tokenizer, layer_index=-1, batch_size=4):
+#     hidden_states = []
+#     for i in tqdm(range(0, len(texts), batch_size), desc="Processing data batches"):
+#         batch_texts = texts[i:i + batch_size]
+#         inputs = tokenizer(batch_texts, return_tensors="pt", padding=True, truncation=True)
+#         with torch.no_grad():
+#             outputs = model(**inputs)
+#         selected_layer_hidden_state = outputs.hidden_states[layer_index].mean(dim=1).cpu().numpy()
+#         hidden_states.append(selected_layer_hidden_state)
+#     return np.vstack(hidden_states)
+
+## 3. 提取多个层的隐藏状态并进行融合, 可以去函数里直接修改layers的元素值
+def extract_hidden_states(texts, model, tokenizer, layers=None, batch_size=4):
     hidden_states = []
+    if layers is None:
+        layers = [-4, -3, -2, -1]  # 默认提取最后4层
+        
     for i in tqdm(range(0, len(texts), batch_size), desc="Processing data batches"):
         batch_texts = texts[i:i + batch_size]
         inputs = tokenizer(batch_texts, return_tensors="pt", padding=True, truncation=True)
         with torch.no_grad():
             outputs = model(**inputs)
-        hidden_states.append(outputs.hidden_states[-1].mean(dim=1).cpu().numpy())
+
+        # 提取并融合指定层的隐藏状态
+        selected_layers_hidden_states = [outputs.hidden_states[layer].mean(dim=1) for layer in layers]
+        fused_hidden_state = torch.cat(selected_layers_hidden_states, dim=-1).cpu().numpy()  # 拼接多个层
+        hidden_states.append(fused_hidden_state)
+        
     return np.vstack(hidden_states)
+
+## 4.隐藏状态的池化策略改进，修改pooling_strategy
+# def extract_hidden_states(texts, model, tokenizer, pooling_strategy='max', batch_size=4):
+#     hidden_states = []
+#     for i in tqdm(range(0, len(texts), batch_size), desc="Processing data batches"):
+#         batch_texts = texts[i:i + batch_size]
+#         inputs = tokenizer(batch_texts, return_tensors="pt", padding=True, truncation=True)
+#         with torch.no_grad():
+#             outputs = model(**inputs)
+#         layer_hidden_states = outputs.hidden_states[-1]
+
+#         if pooling_strategy == 'mean':
+#             pooled_hidden_state = layer_hidden_states.mean(dim=1).cpu().numpy()
+#         elif pooling_strategy == 'max':
+#             pooled_hidden_state = layer_hidden_states.max(dim=1).values.cpu().numpy()
+#         elif pooling_strategy == 'cls':
+#             pooled_hidden_state = layer_hidden_states[:, 0, :].cpu().numpy()  # First token (CLS)
+#         else:
+#             raise ValueError("Unknown pooling strategy")
+
+#         hidden_states.append(pooled_hidden_state)
+#     return np.vstack(hidden_states)
+
+## 5.降维技术（如PCA、t-SNE）来减少特征的维度，或者通过归一化操作使特征更加标准化(apply_pca=True进行降维) 
+# from sklearn.decomposition import PCA
+
+# def extract_hidden_states(texts, model, tokenizer, apply_pca=True, n_components=50, batch_size=4):
+#     hidden_states = []
+#     for i in tqdm(range(0, len(texts), batch_size), desc="Processing data batches"):
+#         batch_texts = texts[i:i + batch_size]
+#         inputs = tokenizer(batch_texts, return_tensors="pt", padding=True, truncation=True)
+#         with torch.no_grad():
+#             outputs = model(**inputs)
+#         hidden_state = outputs.hidden_states[-1].mean(dim=1).cpu().numpy()
+#         hidden_states.append(hidden_state)
+
+#     hidden_states = np.vstack(hidden_states)
+    
+#     if apply_pca:
+#         pca = PCA(n_components=n_components)
+#         hidden_states = pca.fit_transform(hidden_states)
+#         print(f"Hidden states reduced to {n_components} dimensions using PCA.")
+        
+#     return hidden_states
+
 
 def load_data(non_infringement_file, infringement_file):
     with open(non_infringement_file, 'r', encoding='utf-8') as file:
@@ -47,7 +124,8 @@ def load_data(non_infringement_file, infringement_file):
 
     return non_infringement_outputs, y_non_infringement, infringement_outputs, y_infringement
 
-def train_model(X_train, y_train, X_test, y_test, input_dim, hidden_dim, epochs=200, lr=0.001):
+
+def train_model(X_train, y_train, X_test, y_test, input_dim, hidden_dim, epochs=200, lr=0.001, checkpoint_path="best_model.pth"):
     custom_mlp = CustomMLP(input_dim, hidden_dim)
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(custom_mlp.parameters(), lr=lr)
@@ -55,7 +133,11 @@ def train_model(X_train, y_train, X_test, y_test, input_dim, hidden_dim, epochs=
     X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
     y_train_tensor = torch.tensor(y_train, dtype=torch.float32).unsqueeze(1)
 
+    best_accuracy = -float('inf')  # Initialize the best accuracy to negative infinity
+    best_model_state = None  # Store the state of the best model
+    best_epoch = 0  # Track the epoch with the best accuracy
     losses = []
+
     for epoch in tqdm(range(epochs), desc="Training Epochs"):
         custom_mlp.train()
         optimizer.zero_grad()
@@ -76,6 +158,22 @@ def train_model(X_train, y_train, X_test, y_test, input_dim, hidden_dim, epochs=
             
             accuracy = accuracy_score(y_test, y_pred)
             print(f"Test Accuracy at Epoch {epoch + 1}: {accuracy * 100:.2f}%")
+            
+            # Compute precision, recall, F1-score, etc.
+            report = classification_report(y_test, y_pred, target_names=["infringement", "non_infringement"])
+            print(f"Classification Report at Epoch {epoch + 1}:\n{report}")
+
+            # Save model if this epoch's accuracy is the best
+            if accuracy > best_accuracy:
+                best_accuracy = accuracy
+                best_model_state = custom_mlp.state_dict()  # Save the best model state
+                best_epoch = epoch + 1
+                torch.save(best_model_state, checkpoint_path)
+                print(f"New best model saved with accuracy {best_accuracy * 100:.2f}% at epoch {best_epoch}")
+                print(f"Best Classification Report at Epoch {best_epoch}:\n{report}")
+
+    # After all epochs, load the best model for final evaluation
+    custom_mlp.load_state_dict(torch.load(checkpoint_path))
 
     plt.figure(figsize=(10, 5))
     plt.plot(losses, label='Training Loss')
@@ -85,7 +183,8 @@ def train_model(X_train, y_train, X_test, y_test, input_dim, hidden_dim, epochs=
     plt.legend()
     plt.show()
 
-    return custom_mlp, losses, accuracy
+    print(f"Best Model was saved at epoch {best_epoch} with accuracy {best_accuracy * 100:.2f}%")
+    return custom_mlp, losses, best_accuracy
 
 def save_checkpoint(model, optimizer, epoch, loss, filepath):
     checkpoint = {
