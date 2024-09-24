@@ -2,7 +2,7 @@ import sys, os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 import torch
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 import json
 from tqdm import tqdm
@@ -236,4 +236,5 @@ if __name__ == "__main__":
     else:
         args.decoding = "undefined"
         print(f'[WARNING] Unsupported decoding mode: {args}')
+        
     main(args)

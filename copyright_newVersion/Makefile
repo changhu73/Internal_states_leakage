@@ -2,9 +2,19 @@
 /bin/python3 /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/generate.py --input_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/data/data.nonliteral.json --prompt_file  /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/prompts/prompts.nonliteral.format1.json --output_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/outputs/outputs.nonliteral.prompt1.Meta-Llama-3.1-8B.greedy.json --model meta-llama/Meta-Llama-3.1-8B --n_instances 590
 /bin/python3 /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/generate.py --input_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/data/data.qa.json --prompt_file  /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/prompts/prompts.qa.format1.json --output_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/outputs/outputs.qa.prompt1.Meta-Llama-3.1-8B.greedy.json --model meta-llama/Meta-Llama-3.1-8B --n_instances 589
 
+
+
+evaluate:
 /bin/python3 /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/eval_literal_copying.py --input /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/outputs/outputs.literal.prompt1.Meta-Llama-3.1-8B.greedy.json --output /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scores/scores-literal-copying.literal.prompt1.Meta-Llama-3.1-8B.greedy.json
 
+
+/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/generate.py --input_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/data/data.literal.json --prompt_file  /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/prompts/prompts.literal.format2.json --output_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/outputs/outputs.literal.prompt2.Meta-Llama-3.1-8B.greedy.json --model meta-llama/Meta-Llama-3.1-8B --n_instances 758
+/bin/python3 /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/eval_literal_copying.py --input /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/outputs/outputs.literal.prompt2.Meta-Llama-3.1-8B.greedy.json --output /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scores/scores-literal-copying.literal.prompt2.Meta-Llama-3.1-8B.greedy.json
+
+
 export PYTHONPATH=./src:$$PYTHONPATH
+
+meta-llama/Llama-2-70b-chat-hf
 
 quick_start:
 	$(eval HF_MODEL=meta-llama/Meta-Llama-3.1-8B)
