@@ -7,22 +7,22 @@ def process_data(scores_file, infringement_output, non_infringement_output):
         data = json.load(file)
 
 # Medium split
-    scores = [entry['score_rouge_l'] for entry in data]
-    threshold = np.median(scores)
-    print(f'Median threshold: {threshold}')
+    # scores = [entry['score_rouge_l'] for entry in data]
+    # threshold = np.median(scores)
+    # print(f'Median threshold: {threshold}')
 
 
 # Split by ourselves
-    # scores = [entry['score_rouge_l'] for entry in data]
+    scores = [entry['score_rouge_l'] for entry in data]
 
-    # lower_threshold = np.percentile(scores, 10)
-    # upper_threshold = np.percentile(scores, 90)
+    lower_threshold = np.percentile(scores, 10)
+    upper_threshold = np.percentile(scores, 90)
     
-    # print(f'Lower threshold (10th percentile): {lower_threshold}')
-    # print(f'Upper threshold (90th percentile): {upper_threshold}')
+    print(f'Lower threshold (10th percentile): {lower_threshold}')
+    print(f'Upper threshold (90th percentile): {upper_threshold}')
 
-    group1 = [entry for entry in data if entry['score_rouge_l'] > threshold]
-    group2 = [entry for entry in data if entry['score_rouge_l'] < threshold]
+    group1 = [entry for entry in data if entry['score_rouge_l'] > upper_threshold]
+    group2 = [entry for entry in data if entry['score_rouge_l'] < lower_threshold]
 
     for entry in group1:
         entry['label'] = 0
