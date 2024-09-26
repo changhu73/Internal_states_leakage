@@ -130,6 +130,28 @@
         
 #     return hidden_states
 
+# # 7.
+# import umap
+
+# def extract_hidden_states(texts, model, tokenizer, apply_umap=True, n_components=2, batch_size=4):
+#     hidden_states = []
+#     for i in tqdm(range(0, len(texts), batch_size), desc="Processing data batches"):
+#         batch_texts = texts[i:i + batch_size]
+#         inputs = tokenizer(batch_texts, return_tensors="pt", padding=True, truncation=True)
+#         with torch.no_grad():
+#             outputs = model(**inputs)
+#         hidden_state = outputs.hidden_states[-1].mean(dim=1).cpu().numpy()
+#         hidden_states.append(hidden_state)
+
+#     hidden_states = np.vstack(hidden_states)
+    
+#     if apply_umap:
+#         reducer = umap.UMAP(n_components=n_components, random_state=42)
+#         hidden_states = reducer.fit_transform(hidden_states)
+#         print(f"Hidden states reduced to {n_components} dimensions using UMAP.")
+        
+#     return hidden_states
+
 
 # def load_data(non_infringement_file, infringement_file):
 #     with open(non_infringement_file, 'r', encoding='utf-8') as file:
@@ -319,6 +341,30 @@ def extract_reference_embeddings(references, model, tokenizer, batch_size=4):
             outputs = model(**inputs)
         embeddings.append(outputs.pooler_output.cpu().numpy())
     return np.vstack(embeddings)
+
+# def extract_hidden_states(texts, model, tokenizer, batch_size=4):
+#     hidden_states = []
+#     for i in tqdm(range(0, len(texts), batch_size), desc="Processing data batches"):
+#         batch_texts = texts[i:i + batch_size]
+#         inputs = tokenizer(batch_texts, return_tensors="pt", padding=True, truncation=True)
+#         with torch.no_grad():
+#             outputs = model(**inputs)
+#         last_hidden_state = outputs.hidden_states[-1]
+#         hidden_state_half = last_hidden_state[:, :, :last_hidden_state.size(-1) // 2].mean(dim=1).cpu().numpy()
+#         hidden_states.append(hidden_state_half)
+#     return np.vstack(hidden_states)
+
+# def extract_reference_embeddings(references, model, tokenizer, batch_size=4):
+#     embeddings = []
+#     for i in tqdm(range(0, len(references), batch_size), desc="Processing references"):
+#         batch_references = references[i:i + batch_size]
+#         inputs = tokenizer(batch_references, return_tensors="pt", padding=True, truncation=True)
+#         with torch.no_grad():
+#             outputs = model(**inputs)
+#         reference_embedding_half = outputs.pooler_output[:, outputs.pooler_output.size(-1) // 2:].cpu().numpy()
+#         embeddings.append(reference_embedding_half)
+#     return np.vstack(embeddings)
+
 
 def load_data(non_infringement_file, infringement_file):
     with open(non_infringement_file, 'r', encoding='utf-8') as file:
