@@ -332,54 +332,74 @@ class CustomMLP(nn.Module):
 #         hidden_states.append(outputs.hidden_states[-1].mean(dim=1).cpu().numpy())
 #     return np.vstack(hidden_states)
 
-# def extract_reference_embeddings(references, model, tokenizer, batch_size=4):
-#     embeddings = []
-#     for i in tqdm(range(0, len(references), batch_size), desc="Processing references"):
-#         batch_references = references[i:i + batch_size]
-#         inputs = tokenizer(batch_references, return_tensors="pt", padding=True, truncation=True)
-#         with torch.no_grad():
-#             outputs = model(**inputs)
-#         embeddings.append(outputs.pooler_output.cpu().numpy())
-#     return np.vstack(embeddings)
-
-def extract_hidden_states(texts, model, tokenizer, batch_size=4):
+def extract_hidden_states(texts, model, tokenizer, layers=None, batch_size=4):
     hidden_states = []
+    if layers is None:
+        layers = [-4, -3, -2, -1]  # 默认提取最后4层
+        
     for i in tqdm(range(0, len(texts), batch_size), desc="Processing data batches"):
         batch_texts = texts[i:i + batch_size]
-        inputs = tokenizer(batch_texts, return_tensors="pt", padding=True, truncation=True, max_length=1)  # 限制为前5个token
-        input_ids = inputs['input_ids'][:, :1]  # 取前5个token的ID
-        attention_mask = inputs['attention_mask'][:, :1]  # 取前5个token的attention mask
-
+        inputs = tokenizer(batch_texts, return_tensors="pt", padding=True, truncation=True)
         with torch.no_grad():
-            outputs = model(input_ids=input_ids, attention_mask=attention_mask, output_hidden_states=True)
+            outputs = model(**inputs)
 
-        # 只考虑前5个token的 hidden states，取最后一层
-        last_hidden_state = outputs.hidden_states[-1][:, :1, :]  # (batch_size, 5, hidden_dim)
-
-        # 对前5个token的 hidden states 取均值
-        hidden_state_mean = last_hidden_state.mean(dim=1).cpu().numpy()  # (batch_size, hidden_dim)
+        # 提取并融合指定层的隐藏状态
+        selected_layers_hidden_states = [outputs.hidden_states[layer].mean(dim=1) for layer in layers]
+        fused_hidden_state = torch.cat(selected_layers_hidden_states, dim=-1).cpu().numpy()  # 拼接多个层
+        hidden_states.append(fused_hidden_state)
         
-        hidden_states.append(hidden_state_mean)
-
     return np.vstack(hidden_states)
 
 def extract_reference_embeddings(references, model, tokenizer, batch_size=4):
     embeddings = []
     for i in tqdm(range(0, len(references), batch_size), desc="Processing references"):
         batch_references = references[i:i + batch_size]
-        inputs = tokenizer(batch_references, return_tensors="pt", padding=True, truncation=True, max_length=1)  # 限制为前5个token
-        input_ids = inputs['input_ids'][:, :1]  # 取前5个token的ID
-        attention_mask = inputs['attention_mask'][:, :1]  # 取前5个token的attention mask
-
+        inputs = tokenizer(batch_references, return_tensors="pt", padding=True, truncation=True)
         with torch.no_grad():
-            outputs = model(input_ids=input_ids, attention_mask=attention_mask)
-
-        # 对 pooler_output 取前5个token，BERT 的 pooler_output 是整句话的嵌入，但我们只需要对齐前5个token
-        pooler_output = outputs.pooler_output.cpu().numpy()  # (batch_size, hidden_dim)
-        
-        embeddings.append(pooler_output)
-
+            outputs = model(**inputs)
+        embeddings.append(outputs.pooler_output.cpu().numpy())
     return np.vstack(embeddings)
+
+# def extract_hidden_states(texts, model, tokenizer, batch_size=4):
+#     hidden_states = []
+#     for i in tqdm(range(0, len(texts), batch_size), desc="Processing data batches"):
+#         batch_texts = texts[i:i + batch_size]
+#         inputs = tokenizer(batch_texts, return_tensors="pt", padding=True, truncation=True, max_length=1)  # 限制为前5个token
+#         input_ids = inputs['input_ids'][:, :1]  # 取前5个token的ID
+#         attention_mask = inputs['attention_mask'][:, :1]  # 取前5个token的attention mask
+
+#         with torch.no_grad():
+#             outputs = model(input_ids=input_ids, attention_mask=attention_mask, output_hidden_states=True)
+
+#         # 只考虑前5个token的 hidden states，取最后一层
+#         last_hidden_state = outputs.hidden_states[-1][:, :1, :]  # (batch_size, 5, hidden_dim)
+
+#         # 对前5个token的 hidden states 取均值
+#         hidden_state_mean = last_hidden_state.mean(dim=1).cpu().numpy()  # (batch_size, hidden_dim)
+        
+#         hidden_states.append(hidden_state_mean)
+
+#     return np.vstack(hidden_states)
+
+# def extract_reference_embeddings(references, model, tokenizer, batch_size=4):
+#     embeddings = []
+#     for i in tqdm(range(0, len(references), batch_size), desc="Processing references"):
+#         batch_references = references[i:i + batch_size]
+#         inputs = tokenizer(batch_references, return_tensors="pt", padding=True, truncation=True, max_length=1)  # 限制为前5个token
+#         input_ids = inputs['input_ids'][:, :1]  # 取前5个token的ID
+#         attention_mask = inputs['attention_mask'][:, :1]  # 取前5个token的attention mask
+
+#         with torch.no_grad():
+#             outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+
+#         # 对 pooler_output 取前5个token，BERT 的 pooler_output 是整句话的嵌入，但我们只需要对齐前5个token
+#         pooler_output = outputs.pooler_output.cpu().numpy()  # (batch_size, hidden_dim)
+        
+#         embeddings.append(pooler_output)
+
+#     return np.vstack(embeddings)
+
+
 
 
 def load_data(non_infringement_file, infringement_file):
