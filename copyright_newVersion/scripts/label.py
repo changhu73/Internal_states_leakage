@@ -46,7 +46,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process scores and divide into infringement and non-infringement groups.")
-    parser.add_argument('--scores_file', type=str, help='Path to the input scores JSON file.', default='/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scores/scores-literal-copying.extra.prompt1.Llama-2-7b-chat-hf.greedy.json')
+    parser.add_argument('--scores_file', type=str, help='Path to the input scores JSON file.', default='/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scores/scores-literal-copying.extra.prompt1.Llama-3.2-3B.greedy.json')
     parser.add_argument('--infringement_output', type=str, help='Path to save the infringement group JSON.', default='/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/test_division/extra.infringement.json')
     parser.add_argument('--non_infringement_output', type=str, help='Path to save the non-infringement group JSON.', default='/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/test_division/extra.non_infringement.json')
 
