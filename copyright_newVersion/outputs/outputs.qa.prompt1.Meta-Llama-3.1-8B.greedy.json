@@ -825,7 +825,7 @@
             }
         ],
         "prompt": "You will be provided with examples of questions and answers. After the examples, the last question given is the one you are asked to answer. You should use a phrase to answer the question. The output should be in the format \"[Output_Start] {answer} [Output_End]\". Generate only the answer to the last question without copying the question, adding extra commentary, or additional formatting.\n\n\nQuestion: Electrolysis of what can be used to produce oxygen and hydrogen?\nAnswer: [Output_Start] water [Output_End]\n\n\nQuestion: According to A Game Of Thrones, what did Gared lose to the cold?\nAnswer:",
-        "output": " [Output_Start] his fingers [Output_End]"
+        "output": " [Output_Start] his fingers [Output_End]\n"
     },
     {
         "model": "meta-llama/Meta-Llama-3.1-8B",
@@ -1797,7 +1797,7 @@
             }
         ],
         "prompt": "You will be provided with examples of questions and answers. After the examples, the last question given is the one you are asked to answer. You should use a phrase to answer the question. The output should be in the format \"[Output_Start] {answer} [Output_End]\". Generate only the answer to the last question without copying the question, adding extra commentary, or additional formatting.\n\n\nQuestion: Who led the Kievian Rus' troops against Subutai's Mongol army?\nAnswer: [Output_Start] mstislav the bold of halych and mstislav iii of kiev [Output_End]\n\n\nQuestion: According to Casino Royale, what did Bond notice about the two men standing under a tree on the opposite side of the boulevard?\nAnswer:",
-        "output": " [Output_Start] they were wearing identical suits [Output_End]"
+        "output": " [Output_Start] they were both wearing sunglasses [Output_End]"
     },
     {
         "model": "meta-llama/Meta-Llama-3.1-8B",
@@ -2913,7 +2913,7 @@
             }
         ],
         "prompt": "You will be provided with examples of questions and answers. After the examples, the last question given is the one you are asked to answer. You should use a phrase to answer the question. The output should be in the format \"[Output_Start] {answer} [Output_End]\". Generate only the answer to the last question without copying the question, adding extra commentary, or additional formatting.\n\n\nQuestion: When did Sunday Night Football premiere on NBC?\nAnswer: [Output_Start] 2006 [Output_End]\n\n\nQuestion: According to Fahrenheit 451, what book did Montag give to the old man?\nAnswer:",
-        "output": " [Output_Start] The Grapes of Wrath [Output_End]\n"
+        "output": " [Output_Start] The Bible [Output_End]\n"
     },
     {
         "model": "meta-llama/Meta-Llama-3.1-8B",
@@ -4137,7 +4137,7 @@
             }
         ],
         "prompt": "You will be provided with examples of questions and answers. After the examples, the last question given is the one you are asked to answer. You should use a phrase to answer the question. The output should be in the format \"[Output_Start] {answer} [Output_End]\". Generate only the answer to the last question without copying the question, adding extra commentary, or additional formatting.\n\n\nQuestion: What was the name of the King of the Scots?\nAnswer: [Output_Start] william the lion [Output_End]\n\n\nQuestion: According to Five On A Treasure Island, what is the name of the island with the old ruined castle?\nAnswer:",
-        "output": " [Output_Start] kippers [Output_End]"
+        "output": " [Output_Start] kellynch hall [Output_End]"
     },
     {
         "model": "meta-llama/Meta-Llama-3.1-8B",
@@ -4407,7 +4407,7 @@
             }
         ],
         "prompt": "You will be provided with examples of questions and answers. After the examples, the last question given is the one you are asked to answer. You should use a phrase to answer the question. The output should be in the format \"[Output_Start] {answer} [Output_End]\". Generate only the answer to the last question without copying the question, adding extra commentary, or additional formatting.\n\n\nQuestion: What did the acronym AAP stand for?\nAnswer: [Output_Start] apollo applications program [Output_End]\n\n\nQuestion: According to Harry Potter And The Sorcerer'S Stone, what did Harry decide to name his new owl?\nAnswer:",
-        "output": " [Output_Start] Hedwig [Output_End]"
+        "output": " [Output_Start] Hedwig [Output_End]\n"
     },
     {
         "model": "meta-llama/Meta-Llama-3.1-8B",
@@ -4677,7 +4677,7 @@
             }
         ],
         "prompt": "You will be provided with examples of questions and answers. After the examples, the last question given is the one you are asked to answer. You should use a phrase to answer the question. The output should be in the format \"[Output_Start] {answer} [Output_End]\". Generate only the answer to the last question without copying the question, adding extra commentary, or additional formatting.\n\n\nQuestion: How much did Tesla say Edison offered him to redesign his motor and generators?\nAnswer: [Output_Start] fifty thousand dollars [Output_End]\n\n\nQuestion: According to Harry Potter And The Sorcerer'S Stone, what did the Dursleys have for breakfast the day after Harry stayed awake on the windowsill?\nAnswer:",
-        "output": " [Output_Start] bacon and eggs [Output_End]\n"
+        "output": " [Output_Start] porridge [Output_End]\n"
     },
     {
         "model": "meta-llama/Meta-Llama-3.1-8B",
@@ -5649,7 +5649,7 @@
             }
         ],
         "prompt": "You will be provided with examples of questions and answers. After the examples, the last question given is the one you are asked to answer. You should use a phrase to answer the question. The output should be in the format \"[Output_Start] {answer} [Output_End]\". Generate only the answer to the last question without copying the question, adding extra commentary, or additional formatting.\n\n\nQuestion: In what year was Nikola Tesla born? \nAnswer: [Output_Start] 1856 [Output_End]\n\n\nQuestion: According to Hitchhiker'S Guide To The Galaxy, what did the cops threaten to blow up if the group didn't give themselves up?\nAnswer:",
-        "output": " [Output_Start] the police box [Output_End]\n"
+        "output": " [Output_Start] The Earth [Output_End]\n"
     },
     {
         "model": "meta-llama/Meta-Llama-3.1-8B",
@@ -7377,7 +7377,7 @@
             }
         ],
         "prompt": "You will be provided with examples of questions and answers. After the examples, the last question given is the one you are asked to answer. You should use a phrase to answer the question. The output should be in the format \"[Output_Start] {answer} [Output_End]\". Generate only the answer to the last question without copying the question, adding extra commentary, or additional formatting.\n\n\nQuestion: When was a study conducted of Swedish counties?\nAnswer: [Output_Start] between 1960 and 2000 [Output_End]\n\n\nQuestion: According to The Hunger Games, what does Peeta say he has never done before?\nAnswer:",
-        "output": " [Output_Start] He says that he has never kissed anyone before [Output_End]\n"
+        "output": " [Output_Start] He says that he has never been kissed [Output_End]"
     },
     {
         "model": "meta-llama/Meta-Llama-3.1-8B",
@@ -9465,7 +9465,7 @@
             }
         ],
         "prompt": "You will be provided with examples of questions and answers. After the examples, the last question given is the one you are asked to answer. You should use a phrase to answer the question. The output should be in the format \"[Output_Start] {answer} [Output_End]\". Generate only the answer to the last question without copying the question, adding extra commentary, or additional formatting.\n\n\nQuestion: How many paintings did John Sheeshanks give to the museum?\nAnswer: [Output_Start] 233 [Output_End]\n\n\nQuestion: According to Things Fall Apart, what was one of the greatest crimes a man could commit in Umuofia?\nAnswer:",
-        "output": " [Output_Start] Killing a member of his family [Output_End]\n"
+        "output": " [Output_Start] Killing a member of his own clan [Output_End]\n"
     },
     {
         "model": "meta-llama/Meta-Llama-3.1-8B",

@@ -1,8 +1,7 @@
 import sys, os
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
+os.environ["TOKENIZERS_PARALLELISM"] = "true"
+sys.path.append(os.path.join(os.path.dirname(__file__), '/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/'))
 import torch
-# os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 os.environ["CUDA_VISIBLE_DEVICES"] = "4,5,6,7"
 
 import json
@@ -20,6 +19,7 @@ def apply_transform(apply_config, instance):
     instance = instance.copy()
     if "input" in  apply_config:
         assert apply_config["input"] == "capitalize"
+        
         if "input" in instance:
             instance["input"] = instance["input"].upper()
     if "output" in  apply_config:
