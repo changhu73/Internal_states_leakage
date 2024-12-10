@@ -1,13 +1,13 @@
 # %%
 import os
-# os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["CUDA_VISIBLE_DEVICES"] = "1,2,3,4"
 import logging
 logging.basicConfig(level=logging.INFO)
 
 import json
 from tqdm import tqdm
-import torch
 
+from prometheus_eval.vllm import VLLM
 from prometheus_eval import PrometheusEval
 from prometheus_eval.prompts import ABSOLUTE_PROMPT, SCORE_RUBRIC_TEMPLATE
 import torch
@@ -25,13 +25,16 @@ def main(args):
 
     with open(result_path, "r") as f:
         results_list = json.load(f)
+        
     
+    model = VLLM(model="prometheus-eval/prometheus-7b-v2.0")
     judge = PrometheusEval(
-        model_id="prometheus-eval/prometheus-7b-v2.0", 
+        model = model,
+        # model="prometheus-eval/prometheus-7b-v2.0", 
         absolute_grade_template=ABSOLUTE_PROMPT, 
-        num_gpus=torch.cuda.device_count(),
-        # dtype="auto" if torch.cuda.is_bf16_supported() else "half",
-        dtype="half",
+        # num_gpus=torch.cuda.device_count(),
+        # # dtype="auto" if torch.cuda.is_bf16_supported() else "half",
+        # dtype="half",
     )
 
     # instruction = "Compose an original story about 500 words in length"

@@ -101,3 +101,33 @@ non:
 
 /home/guangwei/miniconda3/envs/zdh/bin/python /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/eval_char_copying.py --input /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/outputs/outputs.nonliteral.prompt1.Meta-Llama-3.1-8B.greedy.json --output /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scores/scores-char-copying.nonliteral.prompt1.Meta-Llama-3.1-8B.greedy.json
 
+/home/guangwei/miniconda3/envs/zdh/bin/python /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/eval_event_copying.py --input /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/outputs/outputs.nonliteral.prompt1.Meta-Llama-3.1-8B.greedy.json --output /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scores/scores-event-copying.nonliteral.prompt1.Meta-Llama-3.1-8B.greedy.json
+
+
+
+
+
+
+
+/home/guangwei/miniconda3/envs/zdh/bin/python /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/generate.py --input_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/data/data.literal.json --prompt_file  /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/prompts/prompts.literal.format1.json --output_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_outputs/outputs.literal.prompt1.Llama-3.1-70B.greedy.json --model /raid/data/guangwei/huggingface/hub/models--meta-llama--Llama-3.1-70B/snapshots/349b2ddb53ce8f2849a6c168a81980ab25258dac/ --n_instances 10000
+
+/home/guangwei/miniconda3/envs/zdh/bin/python /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/eval_literal_copying.py --input /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_outputs/outputs.literal.prompt1.Llama-3.1-70B.greedy.json --output /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_scores/scores-literal-copying.literal.prompt1.Llama-3.1-70B.greedy.json
+
+
+/home/guangwei/miniconda3/envs/zdh/bin/python /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/generate.py --input_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/data/data.nonliteral.json --prompt_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/prompts/prompts.nonliteral.format1.json --output_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_outputs/outputs.nonliteral.prompt1.Llama-3.1-70B.greedy.json --model /raid/data/guangwei/huggingface/hub/models--meta-llama--Llama-3.1-70B/snapshots/349b2ddb53ce8f2849a6c168a81980ab25258dac/ --max_new_tokens 1024
+
+/home/guangwei/miniconda3/envs/zdh/bin/python /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/eval_char_copying.py --input /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_outputs/outputs.nonliteral.prompt1.Llama-3.1-70B.greedy.json --output /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_scores/scores-char-copying.nonliteral.prompt1.Llama-3.1-70B.greedy.json
+
+/home/guangwei/miniconda3/envs/zdh/bin/python /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/eval_event_copying.py --input /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_outputs/outputs.nonliteral.prompt1.Llama-3.1-70B.greedy.json --output /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_scores/scores-event-copying.nonliteral.prompt1.Llama-3.1-70B.greedy.json
+
+
+/home/guangwei/miniconda3/envs/zdh/bin/python /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/generate.py --input_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/data/data.qa.json --prompt_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/prompts/prompts.qa.format1.json --output_file /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_outputs/outputs.qa.prompt1.Llama-3.1-70B.greedy.json --model /raid/data/guangwei/huggingface/hub/models--meta-llama--Llama-3.1-70B/snapshots/349b2ddb53ce8f2849a6c168a81980ab25258dac/
+
+/home/guangwei/miniconda3/envs/zdh/bin/python /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/eval_qa.py --input /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_outputs/outputs.qa.prompt1.Llama-3.1-70B.greedy.json --output /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_scores/scores-qa.qa.prompt1.Llama-3.1-70B.greedy.json
+
+/home/guangwei/miniconda3/envs/zdh/bin/python /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/eval_fluency.py --input /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_outputs/outputs.literal.prompt1.Llama-3.1-70B.greedy.json --output /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_scores/scores-fluency.literal.prompt1.Llama-3.1-70B.greedy.json
+
+/home/guangwei/miniconda3/envs/zdh/bin/python /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/eval_fluency.py --input /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_outputs/outputs.nonliteral.prompt1.Llama-3.1-70B.greedy.json --output /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_scores/scores-fluency.nonliteral.prompt1.Llama-3.1-70B.greedy.json
+
+
+/home/guangwei/miniconda3/envs/zdh/bin/python /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/scripts/summary.py --root /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_scores/scores-literal-copying.literal.prompt1.Llama-3.1-70B.greedy.json /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_scores/scores-char-copying.nonliteral.prompt1.Llama-3.1-70B.greedy.json /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_scores/scores-event-copying.nonliteral.prompt1.Llama-3.1-70B.greedy.json /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_scores/scores-qa.qa.prompt1.Llama-3.1-70B.greedy.json /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_scores/scores-fluency.literal.prompt1.Llama-3.1-70B.greedy.json /home/guangwei/LLM-COPYRIGHT/copyright_newVersion/new_scores/scores-fluency.nonliteral.prompt1.Llama-3.1-70B.greedy.json
