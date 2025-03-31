@@ -1,7 +1,7 @@
 import pandas as pd
 import json
 
-file_path = '/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/Result.csv'
+file_path = 'Result.csv'
 df = pd.read_csv(file_path)
 
 input_data = df.iloc[:, 4]
@@ -22,8 +22,8 @@ for item in output_data:
     if input_value and reference_value and reference_value.startswith(input_value):
         item['reference'] = reference_value[len(input_value):].strip()
 
-output_json_file_path = '/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/data/data.extra.json'
+output_json_file_path = ''
 with open(output_json_file_path, 'w', encoding='utf-8') as json_file:
     json.dump(output_data, json_file, ensure_ascii=False, indent=4)
 
-print(f"数据已处理并保存到 {output_json_file_path}")
+print(f"keeped at {output_json_file_path}")

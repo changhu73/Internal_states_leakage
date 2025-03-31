@@ -18,8 +18,8 @@ def process_data(scores_file, infringement_output, non_infringement_output):
     lower_threshold = np.percentile(scores, 30)
     upper_threshold = np.percentile(scores, 70)
     
-    print(f'Lower threshold (10th percentile): {lower_threshold}')
-    print(f'Upper threshold (90th percentile): {upper_threshold}')
+    print(f'Lower threshold (30th percentile): {lower_threshold}')
+    print(f'Upper threshold (70th percentile): {upper_threshold}')
 
     group1 = [entry for entry in data if entry['score_rouge_l'] >= upper_threshold]
     group2 = [entry for entry in data if entry['score_rouge_l'] <= lower_threshold]
@@ -46,9 +46,9 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process scores and divide into infringement and non-infringement groups.")
-    parser.add_argument('--scores_file', type=str, help='Path to the input scores JSON file.', default='/raid/data/guangwei/copyright_newVersion/scores/scores-literal-copying.extra.prompt1.Meta-Llama-3.1-8B.greedy.json')
-    parser.add_argument('--infringement_output', type=str, help='Path to save the infringement group JSON.', default='/raid/data/guangwei/copyright_newVersion/test_division/extra_30_8B.infringement.json')
-    parser.add_argument('--non_infringement_output', type=str, help='Path to save the non-infringement group JSON.', default='/raid/data/guangwei/copyright_newVersion/test_division/extra_30_8B.non_infringement.json')
+    parser.add_argument('--scores_file', type=str, help='Path to the input scores JSON file.', default='')
+    parser.add_argument('--infringement_output', type=str, help='Path to save the infringement group JSON.', default='')
+    parser.add_argument('--non_infringement_output', type=str, help='Path to save the non-infringement group JSON.', default='')
 
     args = parser.parse_args()
     main(args)
