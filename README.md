@@ -1,4 +1,4 @@
-# Internal states copyright
+# Internal states leakage
 
 "git clone https://github.com/chentong0/copy-bench.git" under "copyright" folder
 
