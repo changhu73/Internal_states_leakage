@@ -1,10 +1,15 @@
-# Internal states leakage
-
 ```markdown
-# 🧩 Internal States Leakage Project – Makefile Guide
+# 🧩 Internal States Leakage Project
 
-This guide explains how to use the provided **Makefile** to run the full pipeline for the *Internal States Leakage* project.  
-The workflow is: **generate ➜ evaluate ➜ label ➜ train & verification**.
+This repository provides a **data-to-model pipeline** for detecting and training on internal state leakage.  
+The workflow proceeds in **four main steps**:
+
+1. **Generate** data  
+2. **Evaluate** generated outputs  
+3. **Label** the evaluated data  
+4. **Train** a binary classification model
+
+The automation is managed by a `Makefile`, making it easy to reproduce the entire process.
 
 ---
 
@@ -29,16 +34,25 @@ The workflow is: **generate ➜ evaluate ➜ label ➜ train & verification**.
 
 ---
 
-## ⚡ Quick Start
+## 🚀 Quick Start
 
-Clone the repository and move into the project directory:
+Make sure you have **GNU Make** and **Python 3** installed.
+
+Clone this repository and run:
 
 ```bash
-git clone <your-repo-url>
-cd internal-states-leakage
+make help
 ````
 
-Check the available targets:
+This displays all available targets.
+
+---
+
+## 🛠️ Makefile Targets
+
+### 🔹 `help` (default)
+
+Show all available commands.
 
 ```bash
 make help
@@ -46,87 +60,106 @@ make help
 
 ---
 
-## 🛠️ Makefile Targets
+### 🔹 `generate`
 
-| Target     | Description                                       |
-| ---------- | ------------------------------------------------- |
-| `generate` | Generate synthetic data using the specified model |
-| `evaluate` | Evaluate generated data for literal copying       |
-| `label`    | Assign labels based on evaluation scores          |
-| `train`    | Train the binary classification model             |
-| `clean`    | Remove all generated files                        |
-
----
-
-## 🚀 Usage Steps
-
-### 1️⃣ Generate Data
-
-Produce outputs using the given model:
+Generate synthetic data using the specified model.
 
 ```bash
 make generate
 ```
 
-### 2️⃣ Evaluate
+This runs:
 
-Evaluate generated outputs for literal copying:
+```bash
+/bin/python3 scripts/generate.py \
+    --input_file data/data.literal.json \
+    --prompt_file prompts/prompts.literal.format1.json \
+    --output_file outputs/outputs.literal.prompt1.meta-llama/Meta-Llama-3.1-8B.greedy.json \
+    --model meta-llama/Meta-Llama-3.1-8B \
+    --n_instances 1000
+```
+
+---
+
+### 🔹 `evaluate`
+
+Evaluate the generated data for literal copying.
 
 ```bash
 make evaluate
 ```
 
-### 3️⃣ Label
+Command executed:
 
-Create labeled data from evaluation scores:
+```bash
+/bin/python3 scripts/eval_literal_copying.py \
+    --input outputs/outputs.literal.prompt1.meta-llama/Meta-Llama-3.1-8B.greedy.json \
+    --output scores/scores-literal-copying.literal.prompt1.meta-llama/Meta-Llama-3.1-8B.greedy.json
+```
+
+---
+
+### 🔹 `label`
+
+Label the evaluated data for training.
 
 ```bash
 make label
 ```
 
-### 4️⃣ Train the Model
+Command executed:
 
-Train a binary classification model:
+```bash
+/bin/python3 scripts/label.py \
+    --input scores/scores-literal-copying.literal.prompt1.meta-llama/Meta-Llama-3.1-8B.greedy.json \
+    --output labels/labels.literal.prompt1.meta-llama/Meta-Llama-3.1-8B.json
+```
+
+---
+
+### 🔹 `train`
+
+Train the binary classification model.
 
 ```bash
 make train
 ```
 
+Command executed:
+
+```bash
+/bin/python3 scripts/train.py \
+    --input labels/labels.literal.prompt1.meta-llama/Meta-Llama-3.1-8B.json \
+    --model_output outputs/trained_model.meta-llama/Meta-Llama-3.1-8B.bin
+```
+
+> **Note:** The Makefile includes the combined target `train & verification`,
+> but you can simply run `make train` to trigger the training step.
+
 ---
 
-## 🧹 Cleaning Up
+### 🔹 `clean`
 
-Remove all generated JSON and model binary files:
+Remove all generated files.
 
 ```bash
 make clean
 ```
 
----
+This cleans up:
 
-## ⚙️ Key Variables
-
-The Makefile defines the following important variables (edit them as needed):
-
-```makefile
-PYTHON := /bin/python3
-MODEL := meta-llama/Meta-Llama-3.1-8B
-N_INSTANCES := 1000
-```
-
-* **PYTHON**: Path to Python 3 interpreter
-* **MODEL**: Model used for generation
-* **N\_INSTANCES**: Number of data instances to generate
-
-Modify these directly in the `Makefile` to customize runs.
+* `outputs/*.json`
+* `scores/*.json`
+* `labels/*.json`
+* `outputs/*.bin`
 
 ---
 
 ## 💡 Tips
 
-* Run `make help` anytime to list all targets and their descriptions.
-* Ensure the `scripts/` directory contains all Python scripts before running.
-* Adjust the `MODEL` variable if you want to experiment with other models.
+* Update the `MODEL` or `N_INSTANCES` variables in the `Makefile` to customize runs.
+* Ensure all required Python packages are installed before running the commands.
+
 
 ```
-
+```
