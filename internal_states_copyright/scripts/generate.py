@@ -1,6 +1,6 @@
 import sys, os
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
-sys.path.append(os.path.join(os.path.dirname(__file__), '/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/'))
+sys.path.append(os.path.join(os.path.dirname(__file__), ' '))
 import torch
 os.environ["CUDA_VISIBLE_DEVICES"] = "2,5,6,7"
 import time  # 导入time模块来测量时间

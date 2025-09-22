@@ -155,4 +155,3 @@ dependencies:
       - xxhash==3.5.0
       - yarl==1.11.0
       - zipp==3.20.1
-prefix: /home/Guangwei/.conda/envs/sit

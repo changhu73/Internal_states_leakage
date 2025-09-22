@@ -61,7 +61,7 @@ def load_data(non_infringement_file, infringement_file):
 
     return non_infringement_outputs, non_infringement_references, y_non_infringement, infringement_outputs, infringement_references, y_infringement
 
-def train_model(X_train, y_train, X_test, y_test, input_dim, hidden_dim, epochs=500, lr=0.001, checkpoint_path="/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/models/best_model.pth"):
+def train_model(X_train, y_train, X_test, y_test, input_dim, hidden_dim, epochs=500, lr=0.001, checkpoint_path=" models/best_model.pth"):
     custom_mlp = CustomMLP(input_dim, hidden_dim)
     criterion = nn.BCEWithLogitsLoss()
     optimizer = torch.optim.Adam(custom_mlp.parameters(), lr=lr)
@@ -172,9 +172,9 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train a Custom MLP for infringement detection.")
     parser.add_argument('--model_name', type=str, help='Name of the pretrained model.', default='meta-llama/Llama-3.2-3B')
-    parser.add_argument('--non_infringement_file', type=str, help='Path to the non-infringement data file.', default='/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/test_division/extra.non_infringement.json')
-    parser.add_argument('--infringement_file', type=str, help='Path to the infringement data file.', default='/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/test_division/extra.infringement.json')
-    parser.add_argument('--checkpoint_file', type=str, help='Path to save the model checkpoint.', default='/home/guangwei/LLM-COPYRIGHT/copyright_newVersion/models/custom_mlp_model.pth')
+    parser.add_argument('--non_infringement_file', type=str, help='Path to the non-infringement data file.', default=' test_division/extra.non_infringement.json')
+    parser.add_argument('--infringement_file', type=str, help='Path to the infringement data file.', default=' test_division/extra.infringement.json')
+    parser.add_argument('--checkpoint_file', type=str, help='Path to save the model checkpoint.', default=' models/custom_mlp_model.pth')
 
     args = parser.parse_args()
     main(args)
