@@ -1,4 +1,4 @@
-# 🧩 ISACL: Internal State Analyzer for Copyrighted Training Data Leakage (2025 EMNLP Findings)
+## 🧩 ISACL: Internal State Analyzer for Copyrighted Training Data Leakage (2025 EMNLP Findings)
 
 This repository provides a **data-to-model pipeline** for detecting and training on internal state leakage.  
 The workflow proceeds in **four main steps**:
