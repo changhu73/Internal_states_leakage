@@ -1,5 +1,4 @@
-```markdown
-# 🧩 Internal States Leakage Project
+# 🧩 ISACL: Internal State Analyzer for Copyrighted Training Data Leakage (2025 EMNLP Findings)
 
 This repository provides a **data-to-model pipeline** for detecting and training on internal state leakage.  
 The workflow proceeds in **four main steps**:
@@ -15,13 +14,12 @@ The automation is managed by a `Makefile`, making it easy to reproduce the entir
 
 ## 📂 Project Structure
 
-```
-
+```text
 .
 ├── Makefile
 ├── scripts/
 │   ├── generate.py
-│   ├── eval\_literal\_copying.py
+│   ├── eval_literal_copying.py
 │   ├── label.py
 │   └── train.py
 ├── data/
@@ -29,7 +27,6 @@ The automation is managed by a `Makefile`, making it easy to reproduce the entir
 ├── outputs/
 ├── scores/
 └── labels/
-
 ````
 
 ---
@@ -42,7 +39,7 @@ Clone this repository and run:
 
 ```bash
 make help
-````
+```
 
 This displays all available targets.
 
@@ -160,6 +157,3 @@ This cleans up:
 * Update the `MODEL` or `N_INSTANCES` variables in the `Makefile` to customize runs.
 * Ensure all required Python packages are installed before running the commands.
 
-
-```
-```
